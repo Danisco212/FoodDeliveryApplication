@@ -9,11 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.RegistrationActivity"
-            android:theme="@style/NoActionBar"/>
-        <activity android:name=".Activities.LoginActivity"
-            android:theme="@style/NoActionBar"/>
-        <activity android:name=".Activities.MainActivity"
+        <activity android:name=".Activities.CartActivity"></activity>
+        <activity
+            android:name=".Activities.RegistrationActivity"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".Activities.MainActivity"
             android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

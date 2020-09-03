@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.example.myapplication.Fragments.CartFragment;
 import com.example.myapplication.Fragments.HomeFragment;
 import com.example.myapplication.Fragments.MonitorOrderFragment;
 import com.example.myapplication.Fragments.OrderHistoryFragment;
@@ -75,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.cart:
                         if (userLoggedIn()){
-                            loadFragment(new CartFragment());
-                            setTitle("My Cart");
+                            startActivity(new Intent(MainActivity.this, CartActivity.class));
                         }
                         break;
                     case R.id.history:
