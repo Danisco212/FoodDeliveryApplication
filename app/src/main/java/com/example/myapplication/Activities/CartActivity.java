@@ -3,6 +3,7 @@ package com.example.myapplication.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.example.myapplication.Adapters.CartItemAdapter;
 import com.example.myapplication.Entities.CartProduct;
 import com.example.myapplication.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +41,12 @@ public class CartActivity extends AppCompatActivity {
 
     private List<CartProduct> cartProductList;
 
+    private Float subTotal;
+    private Float totalPrice;
+    private Float deliveryFee = 3.99f;
+    private TextView sumTotal, total, shippingcost;
+    private Button checkOut;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +56,12 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void init(){
+        checkOut = findViewById(R.id.checkout_btn);
+        checkOut.setEnabled(false);
+        sumTotal = findViewById(R.id.cart_subtotal);
+        shippingcost = findViewById(R.id.cart_shippingcost);
+        total = findViewById(R.id.cart_total);
+
         cartProductList = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("cart").child(mAuth.getUid());
@@ -81,6 +96,7 @@ public class CartActivity extends AppCompatActivity {
                         cartProductList.add(cartProduct);
                     }
                     fillCart();
+                    calculateTotal();
                 }
                 loading.setVisibility(View.GONE);
             }
@@ -92,13 +108,65 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
-    /// filling the cart with dummy data
+    /// filling the cart with cart items
     private void fillCart(){
-        CartItemAdapter adapter = new CartItemAdapter(this);
+        final CartItemAdapter adapter = new CartItemAdapter(this);
         adapter.setCartProductList(cartProductList);
 
         cartItems.setAdapter(adapter);
         cartItems.setLayoutManager(new LinearLayoutManager(this));
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                mDatabase.child(cartProductList.get(position).getId()).removeValue()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                calculateTotal();
+                            }
+                        });
+            }
+        });
+
+        touchHelper.attachToRecyclerView(cartItems);
+    }
+
+    // calculating the total amount of all the items
+    private void calculateTotal(){
+        subTotal = 0.00f;
+        boolean isOne = true;
+        if (cartProductList.size()==1){
+            subTotal+=cartProductList.get(0).getPrice();
+        }else{
+            for (int i = 0; i < cartProductList.size()-1; i++){
+                if (!cartProductList.get(i).getRestaurant().equals(cartProductList.get(i+1).getRestaurant())){ // not same restaurant
+                    isOne = false;
+                }
+                if (i==0){
+                    subTotal+=cartProductList.get(i).getPrice();
+                }
+                subTotal+=cartProductList.get(i+1).getPrice();
+            }
+        }
+        if (!isOne){
+            deliveryFee*=2;
+        }
+
+        totalPrice = subTotal+deliveryFee;
+
+        // display all totals
+        total.setText("$"+totalPrice);
+        sumTotal.setText("$"+subTotal);
+        shippingcost.setText("$"+deliveryFee);
+        checkOut.setEnabled(true);
+
     }
 
     @Override

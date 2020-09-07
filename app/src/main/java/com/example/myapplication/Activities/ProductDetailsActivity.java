@@ -144,9 +144,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 amountNum =1;
             }
             for (int i =0; i<amountNum; i++){
+                String cartItemId = System.currentTimeMillis()+ "-item-" + new Random().nextInt(999);
                 final int j =i;
-                CartProduct cartProduct = new CartProduct(product.getName(), product.getPrice(), product.getRestaurant(), product.getImage());
-                DatabaseReference myRef = mDatabase.child(mAuth.getUid()).child(System.currentTimeMillis()+ "-item-" + new Random().nextInt(999));
+                CartProduct cartProduct = new CartProduct(cartItemId,product.getName(), product.getPrice(), product.getRestaurant(), product.getImage());
+                DatabaseReference myRef = mDatabase.child(mAuth.getUid()).child(cartItemId);
                 myRef.setValue(cartProduct)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
