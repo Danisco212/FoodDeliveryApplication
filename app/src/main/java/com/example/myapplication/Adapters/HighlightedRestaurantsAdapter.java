@@ -1,19 +1,23 @@
 package com.example.myapplication.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.Entities.Restaurant;
 import com.example.myapplication.R;
 
 import java.util.List;
 
-public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<HighlightedRestaurantsAdapter.HighlightedRestaurantsViewHolder> {
 
     private Context context;
     private List<Restaurant> restaurants;
@@ -23,16 +27,21 @@ public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<Recycler
         this.restaurants = restaurants;
     }
 
+
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HighlightedRestaurantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new HighlightedRestaurantsViewHolder(LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.item_restaurant, parent, false));
+                .inflate(R.layout.item_restaurant, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull HighlightedRestaurantsViewHolder holder, int position) {
+        holder.restaurantName.setText(restaurants.get(position).getName());
+        if (restaurants.get(position).getImage().contains("https")){
+            Glide.with(context).load(restaurants.get(position).getImage()).into(holder.restaurantImage);
+            Log.e("image", restaurants.get(position).getImage());
+        }
     }
 
     @Override
@@ -41,8 +50,12 @@ public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<Recycler
     }
 
     public static class HighlightedRestaurantsViewHolder extends RecyclerView.ViewHolder{
+        private TextView restaurantName;
+        private ImageView restaurantImage;
         public HighlightedRestaurantsViewHolder(@NonNull View itemView) {
             super(itemView);
+            restaurantImage = itemView.findViewById(R.id.restaurant_image);
+            restaurantName = itemView.findViewById(R.id.restaurant_name);
         }
     }
 }

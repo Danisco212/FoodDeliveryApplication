@@ -63,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
     // setting up the slide menu click functions
     private void setUpNavigationView(){
+        if(mAuth.getCurrentUser()!=null){
+            navigationView.inflateMenu(R.menu.menu_drawer_user);
+        }else{
+            navigationView.inflateMenu(R.menu.menu_drawer);
+        }
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -89,10 +94,10 @@ public class MainActivity extends AppCompatActivity {
                             setTitle("Monitor Order");
                         }
                         break;
-                    case R.id.restaurants:
-                        loadFragment(new RestaurantsFragment());
-                        setTitle("Restaurants");
-                        break;
+//                    case R.id.restaurants:
+//                        loadFragment(new RestaurantsFragment());
+//                        setTitle("Restaurants");
+//                        break;
                     case R.id.profile:
                         loadFragment(new ProfileFragments());
                         setTitle("My Profile");
@@ -148,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
     // this is where we set the title of the pages
     private void setTitle(String title){
-        toolbar.setTitle(title);
+        getSupportActionBar().setTitle(title);
     }
 
     @Override

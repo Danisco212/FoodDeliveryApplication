@@ -17,10 +17,10 @@
             android:icon="@drawable/ic_track"
             android:id="@+id/monitor"
             android:title="Monitor order"/>
-        <item
-            android:icon="@drawable/ic_restaurant"
-            android:id="@+id/restaurants"
-            android:title="Restaurants"/>
+<!--        <item-->
+<!--            android:icon="@drawable/ic_restaurant"-->
+<!--            android:id="@+id/restaurants"-->
+<!--            android:title="Restaurants"/>-->
         <item
             android:icon="@drawable/ic_profile"
             android:id="@+id/profile"

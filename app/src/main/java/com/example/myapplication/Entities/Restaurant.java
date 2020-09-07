@@ -1,8 +1,13 @@
 package com.example.myapplication.Entities;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class Restaurant {
     private String name;
-    private String img;
+    private String image = "";
+
+    private HashMap<String, List<Product>> categories;
 
     public String getName() {
         return name;
@@ -12,11 +17,28 @@ public class Restaurant {
         this.name = name;
     }
 
-    public String getImg() {
-        return img;
+    public String getImage() {
+        return image;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public HashMap<String, List<Product>> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(HashMap<String, List<Product>> categories) {
+        this.categories = categories;
+    }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                ", categories=" + categories +
+                '}';
     }
 }

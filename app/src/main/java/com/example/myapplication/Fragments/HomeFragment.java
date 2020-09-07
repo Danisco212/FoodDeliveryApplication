@@ -5,10 +5,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.myapplication.Activities.CartActivity;
+import com.example.myapplication.Activities.ProductDetailsActivity;
 import com.example.myapplication.Adapters.HighlightedProductsAdapter;
 import com.example.myapplication.Adapters.HighlightedRestaurantsAdapter;
 import com.example.myapplication.Entities.Product;
@@ -24,6 +27,11 @@ import com.example.myapplication.Entities.Restaurant;
 import com.example.myapplication.R;
 import com.example.myapplication.Spacing.RecyclerViewSpacing;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +41,11 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView restaurants, products;
 
+    private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
+
+    private List<Restaurant> restaurantList;
+    private List<Product> productList;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -56,40 +68,97 @@ public class HomeFragment extends Fragment {
     }
 
     private void initialize(View view){
+        restaurantList = new ArrayList<>();
+        productList = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("restaurant");
 
         restaurants = view.findViewById(R.id.restaurants);
         products = view.findViewById(R.id.highlighted_products);
 
-        fillDummyData();
+        getRestaurants();
+        fillProduct("Burger King");
     }
+
+    private void getRestaurants(){
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                restaurantList.clear();
+                for (DataSnapshot snapshot1: snapshot.getChildren()){
+                    Restaurant restaurant = snapshot1.getValue(Restaurant.class);
+                    restaurantList.add(restaurant);
+//                    Log.e("Tag", restaurant.toString());
+                }
+                fillDummyData();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     // filling up the home page with some dummy data
     private void fillDummyData(){
-        List<Restaurant> restaurantList = new ArrayList<>();
-        restaurantList.add(new Restaurant());
-        restaurantList.add(new Restaurant());
-        restaurantList.add(new Restaurant());
-        restaurantList.add(new Restaurant());
-        restaurantList.add(new Restaurant());
-
         HighlightedRestaurantsAdapter adapter = new HighlightedRestaurantsAdapter(this.getContext(), restaurantList);
         restaurants.setAdapter(adapter);
         restaurants.setLayoutManager(new LinearLayoutManager(this.getContext(), RecyclerView.HORIZONTAL, false));
-        restaurants.addItemDecoration(new RecyclerViewSpacing(10));
+        if(restaurants.getItemDecorationCount()<=0){
+            restaurants.addItemDecoration(new RecyclerViewSpacing(10));
+        }
+    }
 
-        List<Product> productList = new ArrayList<>();
-        productList.add(new Product());
-        productList.add(new Product());
-        productList.add(new Product());
-        productList.add(new Product());
-        productList.add(new Product());
-        productList.add(new Product());
-        productList.add(new Product());
+    // filling up the products list based on the restaurant
+    private void fillProduct(final String restaurantname){
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                productList.clear();
+                for (DataSnapshot snapshot1: snapshot.getChildren()){
+                    Restaurant restaurant = snapshot1.getValue(Restaurant.class);
+                    if (restaurant.getName().equals(restaurantname)){
+                        if (restaurant.getCategories()!=null){
+                            for (String key: restaurant.getCategories().keySet()){
+                                for (Product product: restaurant.getCategories().get(key)){
+                                    if (product!=null){
+                                        productList.add(product);
+//                                        Log.e("Product:", "Category"+key+" - "+ product.toString());
+                                    }
+                                }
+                            }
+                            productsView();
+                        }
+                    }
+                }
+            }
 
-        HighlightedProductsAdapter adapter1 = new HighlightedProductsAdapter(this.getContext(), productList);
-        products.setAdapter(adapter1);
-        products.setLayoutManager(new StaggeredGridLayoutManager(2,1));
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    // setting up products recycler view
+    private void productsView(){
+        HighlightedProductsAdapter adapter = new HighlightedProductsAdapter(this.getContext(), productList);
+        adapter.setOnItemClickListener(new HighlightedProductsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Bundle bundle = new Bundle();
+                bundle.putString("name", productList.get(position).getName());
+                bundle.putString("desc", productList.get(position).getDescription());
+                bundle.putString("image", productList.get(position).getImage());
+                bundle.putString("restaurant", productList.get(position).getRestaurant());
+                bundle.putFloat("price", productList.get(position).getPrice());
+                startActivity(new Intent(HomeFragment.this.getActivity(), ProductDetailsActivity.class).putExtras(bundle));
+            }
+        });
+        products.setAdapter(adapter);
+        products.setLayoutManager(new GridLayoutManager(this.getContext(),2));
     }
 
     // inflating the cart menu icon in the
