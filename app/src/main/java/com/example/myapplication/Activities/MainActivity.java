@@ -146,9 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
     // this is the function to load the default fragment
     private void loadHomeFragment(){
-        atHome = true;
         loadFragment(new HomeFragment());
         setTitle("Home");
+        atHome = true;
     }
 
     // this is where we set the title of the pages
@@ -160,7 +160,8 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
-        }else if (!atHome){
+        }
+        if (!atHome){
             loadHomeFragment();
         }else{
             super.onBackPressed();

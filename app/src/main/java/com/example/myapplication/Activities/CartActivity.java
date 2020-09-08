@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.myapplication.Adapters.CartItemAdapter;
 import com.example.myapplication.Entities.CartProduct;
+import com.example.myapplication.Entities.Order;
 import com.example.myapplication.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CartActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -165,8 +167,55 @@ public class CartActivity extends AppCompatActivity {
         total.setText("$"+totalPrice);
         sumTotal.setText("$"+subTotal);
         shippingcost.setText("$"+deliveryFee);
-        checkOut.setEnabled(true);
+        if (subTotal>0){
+            checkOut.setEnabled(true);
+        }
 
+    }
+
+    // checkout functionality
+    public void checkout(View view){
+        final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("order").child(mAuth.getUid());
+        final String ordername = "Order" + new Random().nextInt(999) + System.currentTimeMillis();
+        Order order = new Order();
+        order.setName(ordername);
+        order.setTotal(totalPrice);
+        order.setStatus("Being Prepared");
+        // getting the images
+        List<String> images = new ArrayList<>();
+        if(cartProductList.size()==1){
+            images.add(cartProductList.get(0).getImage());
+        }else{
+            for (int i =0; i<2; i++){
+                images.add(cartProductList.get(i).getImage());
+            }
+        }
+        order.setImages(images);
+        myRef.child(ordername).setValue(order)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        for (int i =0; i<cartProductList.size(); i++){
+                            myRef.child(ordername).child("products").child(cartProductList.get(i).getId()).setValue(cartProductList.get(i));
+                            if (i==cartProductList.size()-1){
+                                emptyCart();
+                            }
+                        }
+                    }
+                });
+
+    }
+
+    // empty cart
+    private void emptyCart(){
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("cart").child(mAuth.getUid());
+        myRef.removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        CartActivity.this.onBackPressed();
+                    }
+                });
     }
 
     @Override
