@@ -2,6 +2,7 @@ package com.example.myapplication.Entities;
 
 import androidx.recyclerview.widget.LinearSmoothScroller;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Order {
@@ -10,6 +11,7 @@ public class Order {
     private String name;
     private Float total;
     private List<String> images;
+    private List<CartProduct> products;
 
     public Order() {
     }
@@ -44,5 +46,13 @@ public class Order {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public List<CartProduct> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<CartProduct> products) {
+        this.products = products;
     }
 }

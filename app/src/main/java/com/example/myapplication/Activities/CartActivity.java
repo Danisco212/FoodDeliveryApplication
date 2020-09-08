@@ -191,16 +191,12 @@ public class CartActivity extends AppCompatActivity {
             }
         }
         order.setImages(images);
+        order.setProducts(cartProductList);
         myRef.child(ordername).setValue(order)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        for (int i =0; i<cartProductList.size(); i++){
-                            myRef.child(ordername).child("products").child(cartProductList.get(i).getId()).setValue(cartProductList.get(i));
-                            if (i==cartProductList.size()-1){
-                                emptyCart();
-                            }
-                        }
+                        emptyCart();
                     }
                 });
 

@@ -1,5 +1,6 @@
 package com.example.myapplication.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.myapplication.Activities.OrderDetailsActivity;
 import com.example.myapplication.Adapters.OrderAdapter;
 import com.example.myapplication.Entities.Order;
 import com.example.myapplication.R;
@@ -104,6 +106,13 @@ public class OrderHistoryFragment extends Fragment {
     private void fillOrdersView(){
         OrderAdapter adapter = new OrderAdapter(this.getContext());
         adapter.setOrderList(orderList);
+        adapter.setOnItemClickListener(new OrderAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                startActivity(new Intent(OrderHistoryFragment.this.getActivity(), OrderDetailsActivity.class)
+                        .putExtra("orderName", orderList.get(position).getName()));
+            }
+        });
 
         ordersView.setAdapter(adapter);
         ordersView.setLayoutManager(new LinearLayoutManager(this.getContext()));

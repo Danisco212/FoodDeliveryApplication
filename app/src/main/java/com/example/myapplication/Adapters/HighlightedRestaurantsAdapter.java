@@ -40,7 +40,7 @@ public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<Highligh
         holder.restaurantName.setText(restaurants.get(position).getName());
         if (restaurants.get(position).getImage().contains("https")){
             Glide.with(context).load(restaurants.get(position).getImage()).into(holder.restaurantImage);
-            Log.e("image", restaurants.get(position).getImage());
+//            Log.e("image", restaurants.get(position).getImage());
         }
     }
 
