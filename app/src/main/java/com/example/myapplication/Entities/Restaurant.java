@@ -6,8 +6,8 @@ import java.util.List;
 public class Restaurant {
     private String name;
     private String image = "";
-
     private HashMap<String, List<Product>> categories;
+
 
     public String getName() {
         return name;

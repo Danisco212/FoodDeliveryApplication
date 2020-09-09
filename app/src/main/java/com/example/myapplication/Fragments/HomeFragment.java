@@ -11,15 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.myapplication.Activities.CartActivity;
 import com.example.myapplication.Activities.ProductDetailsActivity;
+import com.example.myapplication.Activities.RestaurantActivity;
+import com.example.myapplication.Activities.SearchResultActivity;
 import com.example.myapplication.Adapters.HighlightedProductsAdapter;
 import com.example.myapplication.Adapters.HighlightedRestaurantsAdapter;
 import com.example.myapplication.Entities.Product;
@@ -39,6 +45,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    private EditText searchBox;
     private RecyclerView restaurants, products;
 
     private DatabaseReference databaseReference;
@@ -68,6 +75,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void initialize(View view){
+        searchBox = view.findViewById(R.id.searchBox);
+        searchForProduct();
         restaurantList = new ArrayList<>();
         productList = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
@@ -80,6 +89,26 @@ public class HomeFragment extends Fragment {
         fillProduct("Burger King");
     }
 
+    // this function handles when the user presses enter to search for the product that they want
+    private void searchForProduct(){
+        TextView.OnEditorActionListener actionListener = new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH){
+                    // send the term to the results activity and find the products
+                    if (!searchBox.getText().toString().trim().equals("")){
+                        startActivity(new Intent(HomeFragment.this.getActivity(), SearchResultActivity.class)
+                                .putExtra("search", searchBox.getText().toString()));
+                    }
+                }
+                return false;
+            }
+        };
+
+        searchBox.setOnEditorActionListener(actionListener);
+
+    }
+
     private void getRestaurants(){
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -90,7 +119,7 @@ public class HomeFragment extends Fragment {
                     restaurantList.add(restaurant);
 //                    Log.e("Tag", restaurant.toString());
                 }
-                fillDummyData();
+                fillRestaurantData();
             }
 
             @Override
@@ -102,9 +131,18 @@ public class HomeFragment extends Fragment {
 
 
     // filling up the home page with some dummy data
-    private void fillDummyData(){
+    private void fillRestaurantData(){
         HighlightedRestaurantsAdapter adapter = new HighlightedRestaurantsAdapter(this.getContext(), restaurantList);
         restaurants.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new HighlightedRestaurantsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                startActivity(new Intent(HomeFragment.this.getActivity(), RestaurantActivity.class)
+                .putExtra("name", restaurantList.get(position).getName()));
+            }
+        });
+
         restaurants.setLayoutManager(new LinearLayoutManager(this.getContext(), RecyclerView.HORIZONTAL, false));
         if(restaurants.getItemDecorationCount()<=0){
             restaurants.addItemDecoration(new RecyclerViewSpacing(10));

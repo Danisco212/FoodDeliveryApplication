@@ -21,6 +21,15 @@ public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<Highligh
 
     private Context context;
     private List<Restaurant> restaurants;
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
 
     public HighlightedRestaurantsAdapter(Context context, List<Restaurant> restaurants) {
         this.context = context;
@@ -32,7 +41,7 @@ public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<Highligh
     @Override
     public HighlightedRestaurantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new HighlightedRestaurantsViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_restaurant, parent, false));
+                .inflate(R.layout.item_restaurant, parent, false), onItemClickListener);
     }
 
     @Override
@@ -52,10 +61,22 @@ public class HighlightedRestaurantsAdapter extends RecyclerView.Adapter<Highligh
     public static class HighlightedRestaurantsViewHolder extends RecyclerView.ViewHolder{
         private TextView restaurantName;
         private ImageView restaurantImage;
-        public HighlightedRestaurantsViewHolder(@NonNull View itemView) {
+        public HighlightedRestaurantsViewHolder(@NonNull View itemView, final OnItemClickListener onItemClickListener) {
             super(itemView);
             restaurantImage = itemView.findViewById(R.id.restaurant_image);
             restaurantName = itemView.findViewById(R.id.restaurant_name);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null) {
+                        int position = HighlightedRestaurantsViewHolder.this.getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            onItemClickListener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 }

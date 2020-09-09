@@ -48,12 +48,20 @@ public class HighlightedProductsAdapter extends RecyclerView.Adapter<Highlighted
 
     @Override
     public void onBindViewHolder(@NonNull HighlightedProductViewHolder holder, int position) {
-        holder.rootView.setCardBackgroundColor(Color.parseColor(products.get(position).getColor()));
-        if (products.get(position).getImage().contains("https")){
-            Glide.with(context).load(products.get(position).getImage()).into(holder.image);
+        if (products.get(position)!=null){
+            try{
+                holder.rootView.setCardBackgroundColor(Color.parseColor(products.get(position).getColor()));
+
+            }catch (IllegalArgumentException e){
+                e.printStackTrace();
+            }
+            if (products.get(position).getImage().contains("https")){
+                Glide.with(context).load(products.get(position).getImage()).into(holder.image);
+            }
+            holder.price.setText("$"+ products.get(position).getPrice());
+            holder.name.setText(products.get(position).getName());
         }
-        holder.price.setText("$"+ products.get(position).getPrice());
-        holder.name.setText(products.get(position).getName());
+
     }
 
     @Override

@@ -45,7 +45,7 @@ public class CartActivity extends AppCompatActivity {
 
     private Float subTotal;
     private Float totalPrice;
-    private Float deliveryFee = 3.99f;
+    private Float deliveryFee = 0.99f;
     private TextView sumTotal, total, shippingcost;
     private Button checkOut;
 

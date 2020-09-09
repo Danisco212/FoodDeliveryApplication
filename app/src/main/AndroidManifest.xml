@@ -9,8 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.OrderDetailsActivity"
+        <activity android:name=".Activities.SearchResultActivity"
             android:theme="@style/NoActionBar"/>
+        <activity
+            android:name=".Activities.RestaurantActivity"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".Activities.OrderDetailsActivity"
+            android:theme="@style/NoActionBar" />
         <activity
             android:name=".Activities.ProductDetailsActivity"
             android:theme="@style/NoActionBar" />
