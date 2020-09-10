@@ -20,7 +20,6 @@ import com.example.myapplication.Fragments.HomeFragment;
 import com.example.myapplication.Fragments.MonitorOrderFragment;
 import com.example.myapplication.Fragments.OrderHistoryFragment;
 import com.example.myapplication.Fragments.ProfileFragments;
-import com.example.myapplication.Fragments.RestaurantsFragment;
 import com.example.myapplication.R;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -101,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.profile:
                         loadFragment(new ProfileFragments());
                         setTitle("My Profile");
+                        break;
+                    case R.id.login:
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        break;
                 }
                 return false;
             }
