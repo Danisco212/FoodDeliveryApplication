@@ -76,7 +76,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private void searchLogic(){
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("restaurant");
 
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()){

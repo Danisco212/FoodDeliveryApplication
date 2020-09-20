@@ -21,6 +21,39 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:padding="5dp"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delivery Address"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/user_address"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/red"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You have no address setup for your account, please add an address with the button below"/>
+                <Button
+                    android:id="@+id/add_Address"
+                    android:onClick="addDeliveryAddress"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Add Address"
+                    android:background="@drawable/background_btn"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"/>
+            </LinearLayout>
 
             <ProgressBar
                 android:visibility="gone"
@@ -160,6 +193,7 @@
 
 
             </LinearLayout>
+
 
             <Button
                 android:onClick="checkout"

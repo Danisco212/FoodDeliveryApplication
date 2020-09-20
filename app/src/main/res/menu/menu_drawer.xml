@@ -22,5 +22,13 @@
 <!--            android:id="@+id/restaurants"-->
 <!--            android:title="Restaurants"/>-->
     </group>
+    <item
+        android:title="profile">
+        <menu>
+            <item
+                android:id="@+id/login"
+                android:title="Login"/>
+        </menu>
+    </item>
 
 </menu>

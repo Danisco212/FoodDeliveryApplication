@@ -107,19 +107,26 @@ public class MonitorOrderFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 orderName.setText(orders.get(position).getName());
-                switch (orders.get(position).getStatus()){
-                    case "Being Prepared":
-                        orderStatus.setImageResource(R.drawable.being_prepared);
-                        break;
-                    case "In transit":
-                        orderStatus.setImageResource(R.drawable.in_transit);
-                        break;
-                    case "Waiting for payment":
-                        orderStatus.setImageResource(R.drawable.arrived);
-                        break;
-                    default:
-                        break;
+                if(orders.get(position).getStatus().equals("Being Prepared")){
+                    orderStatus.setImageResource(R.drawable.being_prepared);
+                }else if (orders.get(position).getStatus().equals("Waiting for payment")){
+                    orderStatus.setImageResource(R.drawable.arrived);
+                }else{
+                    orderStatus.setImageResource(R.drawable.in_transit);
                 }
+//                switch (orders.get(position).getStatus()){
+//                    case "Being Prepared":
+//                        orderStatus.setImageResource(R.drawable.being_prepared);
+//                        break;
+//                    case "In transit":
+//                        orderStatus.setImageResource(R.drawable.in_transit);
+//                        break;
+//                    case "Waiting for payment":
+//                        orderStatus.setImageResource(R.drawable.arrived);
+//                        break;
+//                    default:
+//                        break;
+//                }
                 orderStat.setText("Status: "+orders.get(position).getStatus());
             }
         });
